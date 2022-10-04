@@ -88,7 +88,16 @@ bash <(curl -L https://raw.githubusercontent.com/v2fly/fhs-install-v2ray/master/
 systemctl enable v2ray
 
 # 安装Caddy最新版本
+echo
+echo -e "$yellow安装Caddy最新版本$none"
+echo "----------------------------------------------------------------"
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update
+sudo apt install caddy
 
+systemctl enable caddy
 
 # 打开BBR
 echo
@@ -418,7 +427,6 @@ EOF
 echo
 echo -e "$yellow配置 /etc/caddy/Caddyfile$none"
 echo "----------------------------------------------------------------"
-systemctl stop caddy
 cat >/etc/caddy/Caddyfile <<-EOF
 $domain
 {
@@ -472,7 +480,7 @@ service v2ray restart
 echo
 echo -e "$yellow重启 CaddyV2$none"
 echo "----------------------------------------------------------------"
-# systemctl start caddy
+service caddy restart
 
 echo
 echo
@@ -529,13 +537,13 @@ if [[ $netstack == "6" ]]; then
     echo
     echo -e "$yellow重启 V2Ray$none"
     echo "----------------------------------------------------------------"
-    systemctl restart v2ray
+    service v2ray restart
 
     # 重启 CaddyV2
     echo
     echo -e "$yellow重启 CaddyV2$none"
     echo "----------------------------------------------------------------"
-    systemctl start caddy
+    service caddy restart
 
 # 如果是 IPv4 小鸡，用 WARP 创建 IPv6 出站
 elif  [[ $netstack == "4" ]]; then
@@ -561,7 +569,7 @@ elif  [[ $netstack == "4" ]]; then
     echo
     echo -e "$yellow重启 CaddyV2$none"
     echo "----------------------------------------------------------------"
-    systemctl start caddy
+    service caddy restart
 
 fi
 
