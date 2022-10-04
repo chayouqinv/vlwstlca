@@ -1,7 +1,7 @@
 # 等待1秒, 避免curl下载脚本的打印与脚本本身的显示冲突, 吃掉了提示用户按回车继续的信息
 sleep 1
 
-echo -e "                     _ ___                   \n ___ ___ __ __ ___ _| |  _|___ __ __   _ ___ \n|-_ |_  |  |  |-_ | _ |   |- _|  |  |_| |_  |\n|___|___|  _  |___|___|_|_|___|  _  |___|___|\n        |_____|               |_____|        "
+echo -e "  ------------- "
 red='\e[91m'
 green='\e[92m'
 yellow='\e[93m'
@@ -25,9 +25,7 @@ pause() {
 
 # 说明
 echo
-echo -e "$yellow此脚本仅兼容于Debian 10+系统. 如果你的系统不符合,请Ctrl+C退出脚本$none"
-echo -e "可以去 ${cyan}https://github.com/crazypeace/V2ray_VLESS_WebSocket_TLS_CaddyV2${none} 查看脚本整体思路和关键命令, 以便针对你自己的系统做出调整."
-echo -e "有问题加群 ${cyan}https://t.me/+D8aqonnCR3s1NTRl${none}"
+echo -e "$yellowDebian 10+$none"
 echo "----------------------------------------------------------------"
 
 # 执行脚本带参数
@@ -62,8 +60,8 @@ if [ $# -ge 1 ]; then
     if [[ -z $path ]]; then 
         path=$(echo $v2ray_id | sed 's/.*\([a-z0-9]\{12\}\)$/\1/g')
     fi
-
-    proxy_site="https://zelikk.blogspot.com"
+    #no.5 jumpsite
+    proxy_site="https://www.tiktok.com/topics/gaming"
 
     echo -e "domain: ${domain}"
     echo -e "netstack: ${netstack}"
@@ -138,7 +136,7 @@ if [[ -z $v2ray_id ]]; then
     done
 fi
 
-# V2ray内部端口
+# 内部端口
 if [[ -z $v2ray_port ]]; then
     random=$(shuf -i20001-65535 -n1)
     while :; do
@@ -148,12 +146,12 @@ if [[ -z $v2ray_port ]]; then
         case $v2ray_port in
         80)
             echo
-            echo " ...都说了不能选择 80 端口了咯....."
+            echo " ...不能选择 80 ...."
             error
             ;;
         443)
             echo
-            echo " ..都说了不能选择 443 端口了咯....."
+            echo " ..不能选择 443 ....."
             error
             ;;
         [1-9] | [1-9][0-9] | [1-9][0-9][0-9] | [1-9][0-9][0-9][0-9] | [1-5][0-9][0-9][0-9][0-9] | 6[0-4][0-9][0-9][0-9] | 65[0-4][0-9][0-9] | 655[0-3][0-5])
@@ -228,8 +226,7 @@ if [[ -z $netstack ]]; then
             echo -e " $red检测不到域名解析Domain not resolved $none "
         fi
         echo
-        echo -e "备注...如果你的域名是使用$yellow Cloudflare $none解析的话... 在 DNS 设置页面, 请将$yellow代理状态$none设置为$yellow仅限DNS$none, 小云朵变灰."
-        echo "Notice...If you use Cloudflare to resolve your domain, on 'DNS' setting page, 'Proxy status' should be 'DNS only' but not 'Proxied'."
+        echo "Cloudflare 'Proxy status' should be 'DNS only' but not 'Proxied'."
         echo
         exit 1
     else
@@ -245,7 +242,7 @@ fi
 if [[ -z $path ]]; then
     default_path=$(echo $v2ray_id | sed 's/.*\([a-z0-9]\{12\}\)$/\1/g')
     while :; do
-        echo -e "请输入想要 ${magenta} 用来分流的路径 $none , 例如 /v2raypath , 那么只需要输入 v2raypath 即可"
+        echo -e "请输入想要 ${magenta} 用来分流的路径 $none , 无/"
         echo "Input the WebSocket path for V2ray"
         read -p "$(echo -e "(默认path: [${cyan}${default_path}$none]):")" path
         [[ -z $path ]] && path=$default_path
@@ -253,7 +250,7 @@ if [[ -z $path ]]; then
         case $path in
         *[/$]*)
             echo
-            echo -e " 由于这个脚本太辣鸡了..所以分流的路径不能包含$red / $none或$red $ $none这两个符号.... "
+            echo -e " $red / $none或$red $ $none.... "
             echo
             error
             ;;
@@ -269,25 +266,24 @@ if [[ -z $path ]]; then
     done
 fi
 
-# 反代伪装网站
+# 反代伪站
 if [[ -z $proxy_site ]]; then
     while :; do
-        echo -e "请输入 ${magenta}一个正确的 $none ${cyan}网址$none 用来作为 ${cyan}网站的伪装$none , 例如 https://zelikk.blogspot.com"
-        echo "Input a camouflage site. When GFW visit your domain, the camouflage site will display."
-        read -p "$(echo -e "(默认site: [${cyan}https://zelikk.blogspot.com$none]):")" proxy_site
-        [[ -z $proxy_site ]] && proxy_site="https://zelikk.blogspot.com"
+        echo -e "请输入 ${magenta}一个正确的 $none ${cyan}网址$none 用来作为 ${cyan}网站的伪装$none "
+        read -p "$(echo -e "(默认site: [${cyan}https://www.google.com$none]):")" proxy_site
+        [[ -z $proxy_site ]] && proxy_site="https://www.google.com"
 
         case $proxy_site in
         *[#$]*)
             echo
-            echo -e " 由于这个脚本太辣鸡了..所以伪装的网址不能包含$red # $none或$red $ $none这两个符号.... "
+            echo -e " $red # $none或$red $ $none.... "
             echo
             error
             ;;
         *)
             echo
             echo
-            echo -e "$yellow 伪装的网址camouflage site = ${cyan}${proxy_site}$none"
+            echo -e "$yellow camouflage site = ${cyan}${proxy_site}$none"
             echo "----------------------------------------------------------------"
             echo
             break
@@ -311,7 +307,7 @@ cat >/usr/local/etc/v2ray/config.json <<-EOF
         {
             "listen": "127.0.0.1",
             "port": $v2ray_port,             // ***
-            "protocol": "vless",
+            "protocol": "vmess",
             "settings": {
                 "clients": [
                     {
@@ -337,24 +333,18 @@ cat >/usr/local/etc/v2ray/config.json <<-EOF
     "outbounds": [
         {
             "protocol": "freedom",
-            "settings": {
-                "domainStrategy": "UseIP"
-            },
+            "settings": {"domainStrategy": "UseIP"},
             "tag": "direct"
         },
         // [outbound]
 {
     "protocol": "freedom",
-    "settings": {
-        "domainStrategy": "UseIPv4"
-    },
+    "settings": {"domainStrategy": "UseIPv4"},
     "tag": "force-ipv4"
 },
 {
     "protocol": "freedom",
-    "settings": {
-        "domainStrategy": "UseIPv6"
-    },
+    "settings": {"domainStrategy": "UseIPv6"},
     "tag": "force-ipv6"
 },
 // {
@@ -411,31 +401,24 @@ cat >/usr/local/etc/v2ray/config.json <<-EOF
 //      "outboundTag": "force-ipv6",  // force-ipv6 // force-ipv4 // socks5-warp
 //      "domain": ["geosite:google"]  // ***
 // },
-            {
-                "type": "field",
-                "protocol": [
-                    "bittorrent"
-                ],
-                "outboundTag": "blocked"
-            }
+            {"type": "field", "protocol": ["bittorrent"],"outboundTag": "blocked" }
+			{"type": "field","outboundTag": "blocked","domain": ["geosite:category-ads-all"]}
         ]
     }
 }
 EOF
 
-# 配置 /etc/caddy/Caddyfile
+# Caddyfile
 echo
-echo -e "$yellow配置 /etc/caddy/Caddyfile$none"
+echo -e "$yellowCaddyfile$none"
 echo "----------------------------------------------------------------"
 cat >/etc/caddy/Caddyfile <<-EOF
 $domain
 {
     tls Y3JhenlwZWFjZQ@gmail.com
     encode gzip
-
 #    多用户 多path
-#    import Caddyfile.multiuser
-
+    import Caddyfile.multiuser
     handle_path /$path {
         reverse_proxy localhost:$v2ray_port
     }
@@ -448,7 +431,7 @@ $domain
 }
 EOF
 
-# 多用户 多path
+# 多用户path
 multiuser_path=""
 user_number=10
 while [ $user_number -gt 0 ]; do
@@ -463,7 +446,6 @@ cat >/etc/caddy/Caddyfile.multiuser <<-EOF
 @ws_path {
 $multiuser_path
 }
-
 handle @ws_path {
     uri path_regexp /.* /
     reverse_proxy localhost:$v2ray_port
@@ -472,13 +454,13 @@ EOF
 
 # 重启 V2Ray
 echo
-echo -e "$yellow重启 V2Ray$none"
+echo -e " "
 echo "----------------------------------------------------------------"
 service v2ray restart
 
 # 重启 CaddyV2
 echo
-echo -e "$yellow重启 CaddyV2$none"
+echo -e " "
 echo "----------------------------------------------------------------"
 service caddy restart
 
@@ -572,4 +554,3 @@ elif  [[ $netstack == "4" ]]; then
     service caddy restart
 
 fi
-
